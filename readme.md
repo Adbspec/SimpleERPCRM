@@ -18,6 +18,42 @@ This guide explains how to set up Entity Framework Core with Pomelo MySQL Provid
 
 ## How to run the application
 
+1. **Clone the Repository**  
+   Clone this repository using Git:
+   
+
+2. **Install .NET 8 or higher from source**
+If you don't have .NET 8 installed, you can install it by following the official installation guide. Make sure to install the correct version for your operating system.
+
+3. **Restore Dependencies**
+Run the following command to restore the project dependencies:
+
+   ```bash
+   dotnet restore
+   ```
+4. **Configure the Database Connection**
+Open the *appsettings.json* file and replace the *DefaultConnection* connection string with your own mysql connection string.
+```javascript
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=localhost;Port=3307;Database=erpcrm;User=root;Password=root;Persist Security Info=False;Allow Zero Datetime=True;Connect Timeout=300"
+  }
+}
+
+```
+
+5. **Restore the Database from dbbackup folder**
+there is a  SQL backup file located in the dbbackup folder, restore the database using the MySQL command line or any MySQL workbench.
+
+6. **Run the Application**
+After configuring the connection string and restoring the database, run the application using the following command:
+
+  ```bash
+   dotnet run
+   ```
+
+7. **Default Credentials**
+The default email is abc@gmail.com and the default password is 1234.
 
 
 ## Additional Notes
