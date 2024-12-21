@@ -1,0 +1,110 @@
+[
+  {
+    "outputFileName": "wwwroot/js/site/_Layout.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/_Layout.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/firebase-messaging.min.js",
+    "inputFiles": [
+      "wwwroot/firebase-messaging.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/customjs/misc-functions.min.js",
+    "inputFiles": [
+      "wwwroot/customjs/misc-functions.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/sw.min.js",
+    "inputFiles": [
+      "wwwroot/sw.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/login-script.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/login-script.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/EmployeePermissions.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/EmployeePermissions.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/task-assign.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/task-assign.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/grn.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/grn.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/grn-add.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/grn-add.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/bootstrap.min.css",
+    "inputFiles": [
+      "wwwroot/css/bootstrap.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/add-project.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/add-project.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/perform-iqc.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/perform-iqc.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/Employee.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/Employee.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/EmployeeDetails.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/EmployeeDetails.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/Clientdetails.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/Clientdetails.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/Dashboard.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/Dashboard.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/DepartmentAndDesignations.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/DepartmentAndDesignations.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site/attendance-report.min.js",
+    "inputFiles": [
+      "wwwroot/js/site/attendance-report.js"
+    ]
+  }
+]

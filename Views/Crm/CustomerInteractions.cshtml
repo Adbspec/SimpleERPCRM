@@ -1,0 +1,124 @@
+﻿@model IEnumerable<ERP.Models.Customerinteraction>
+@using ERP.Dto
+@{
+    CustomerInteractionsDto customerInteractionsDto = new CustomerInteractionsDto();
+}
+
+<style>
+    .timeline-desk {
+        display: flex;
+        justify-content: center; /* Centers the box horizontally */
+        width: 100%;
+    }
+    .timeline-box {
+        width: 100%; /* Ensures the box occupies the maximum width */
+        box-sizing: border-box; /* Ensures padding doesn't affect the width */
+    }
+
+   
+    .timeline-lg-item {
+        display: flex;
+        justify-content: center;
+        position: relative;
+    }
+
+</style>
+<!-- start page title -->
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+            <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                    <a href="javascript:void(0);" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addModal">
+                        <i class="mdi mdi-plus-circle me-2"></i> Add Interaction
+                    </a>
+
+                    <a asp-controller="Crm" asp-action="ViewCustomer" class="btn btn-danger mb-2 mx-2">
+                        <i class="mdi mdi-book-arrow-left me-2"></i> Go Back 
+                    </a>
+                </ol>
+            </div>
+            <h4 class="page-title">Interactions with @ViewData["CustomerName"]</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="timeline" dir="ltr">
+
+            <div class="timeline-show mb-3 text-center">
+                <h5 class="m-0 time-show-name">Today</h5>
+            </div>
+            @if (Model.Count() > 0)
+            {
+                int i = 0;
+
+                foreach (var item in Model)
+                {
+                    string direction = "right";
+                    string arrowCLass = "arrow";
+                    if (i % 2 == 0)
+                    {
+                        direction = "left";
+                        arrowCLass = "arrow-alt";
+                    }
+                    <div class="timeline-lg-item timeline-item-@(direction)">
+                        <div class="timeline-desk">
+                            <div class="timeline-box">
+                                <span class="arrowCLass"></span>
+                                <span class="timeline-icon"><i class="mdi mdi-adjust"></i></span>
+                                <h4 class="mt-0 mb-1 font-16">@item.InteractionType</h4>
+                                <p class="text-muted"><small>@item.Timestamp.ToString("g")</small></p>
+                                <p>@item.Details</p>
+                                <a href="javascript: void(0);" class="btn btn-sm btn-light"></a>
+                                <a href="javascript: void(0);" class="btn btn-sm btn-light"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    i += 1;
+                }
+
+
+            }
+
+
+        </div>
+        <!-- end timeline -->
+    </div> <!-- end col -->
+</div>
+
+<!-- end page title -->
+
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerModalLabel">Add Interaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form inside modal -->
+
+                <form asp-controller="Crm" asp-action="AddCustomerInteraction" method="post" id="customerForm">
+                    <div class="mb-3">
+                        <label for="InteractionType" class="form-label">Interaction Type</label>
+                        <textarea class="form-control" id="Description" rows="3" required data-val="true" data-val-required="Description is required" asp-for="@customerInteractionsDto.InteractionType"></textarea>
+                        <span class="text-danger" data-valmsg-for="InteractionType" data-valmsg-replace="true"></span>
+                    </div>
+
+
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Description</label>
+                        <textarea class="form-control" id="Description" rows="3" required data-val="true" data-val-required="Description is required" asp-for="@customerInteractionsDto.Details"></textarea>
+                        <span class="text-danger" data-valmsg-for="Description" data-valmsg-replace="true"></span>
+                    </div>
+                    <input asp-for="@customerInteractionsDto.CustomerId" type="hidden" readonly value="@ViewData["CustomerId"]" />
+                    <button type="submit" class="mt-2 btn btn-primary" id="saveButton">Save</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
