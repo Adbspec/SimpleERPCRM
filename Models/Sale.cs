@@ -9,7 +9,7 @@ public partial class Sale
 
     public int? CustomerId { get; set; }
 
-    public int? ProductId { get; set; }
+    public string ProductSku { get; set; } = null!;
 
     public int QuantitySold { get; set; }
 
@@ -21,5 +21,5 @@ public partial class Sale
 
     public virtual Customer? Customer { get; set; }
 
-    public virtual Product? Product { get; set; }
+    public virtual Product ProductSkuNavigation { get; set; } = null!;
 }

@@ -12,16 +12,9 @@ namespace ERP.Services.Interfaces
 	public class NotificationHub : Hub
     {
 		
-      
-		private readonly FirebaseMessaging _messaging;
+
 		private readonly Dictionary<string, string> _subscriptions = new Dictionary<string, string>();
 
-        public NotificationHub(FirebaseMessaging messaging)
-        {
-         
-			_messaging = messaging;
-
-		}
 
 		public async Task SendNotification(string deviceToken, string title, string body)
 		{

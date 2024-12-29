@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace ERP.Models;
 
@@ -34,6 +35,10 @@ public partial class DBContext : DbContext
     public virtual DbSet<Task> Tasks { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseMySql("server=localhost;port=3307;database=erpcrm;user=root;password=root;persist security info=False;allow zero datetime=True;connect timeout=300", Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.30-mysql"));
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -225,7 +230,7 @@ public partial class DBContext : DbContext
 
             entity.HasIndex(e => e.CustomerId, "customer_id");
 
-            entity.HasIndex(e => e.ProductId, "product_id");
+            entity.HasIndex(e => e.ProductSku, "sales_ibfk_2_idx");
 
             entity.Property(e => e.SaleId).HasColumnName("sale_id");
             entity.Property(e => e.CreatedAt)
@@ -233,7 +238,9 @@ public partial class DBContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
-            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.ProductSku)
+                .HasMaxLength(50)
+                .HasColumnName("product_sku");
             entity.Property(e => e.QuantitySold).HasColumnName("quantity_sold");
             entity.Property(e => e.SaleDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP")
@@ -248,9 +255,10 @@ public partial class DBContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("sales_ibfk_1");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.Sales)
-                .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.Cascade)
+            entity.HasOne(d => d.ProductSkuNavigation).WithMany(p => p.Sales)
+                .HasPrincipalKey(p => p.Sku)
+                .HasForeignKey(d => d.ProductSku)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("sales_ibfk_2");
         });
 

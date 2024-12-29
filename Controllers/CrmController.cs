@@ -1,9 +1,11 @@
 ﻿using ERP.AppCode;
 using ERP.Dto;
 using ERP.Models;
+using ERP.ViewModels;
 using iText.Commons.Actions.Contexts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading.Tasks;
@@ -20,7 +22,7 @@ namespace ERP.Controllers
             _dBContext = dBContext;
         }
 
-       
+
 
         // *****************************************************************************************
         // *************************************** CUSTOMERS SECTION ************************************
@@ -28,11 +30,11 @@ namespace ERP.Controllers
 
         public async Task<IActionResult> ViewCustomer(int? CustomerId)
         {
-          
+
             if (CustomerId.HasValue)
             {
                 var customerInteractions = await _dBContext.Customerinteractions
-                    .Where(c => c.CustomerId == CustomerId.Value).OrderBy(c=>c.Timestamp).ToListAsync();
+                    .Where(c => c.CustomerId == CustomerId.Value).OrderBy(c => c.Timestamp).ToListAsync();
 
                 var customerData = await _dBContext.Customers.FirstOrDefaultAsync(c => c.CustomerId == CustomerId);
 
@@ -320,5 +322,101 @@ namespace ERP.Controllers
                 return Json(new { success = false, message = $"An error occurred: {ex.Message}" });
             }
         }
+
+
+        // *****************************************************************************************
+        // *************************************** SALES SECTION ************************************
+        // *****************************************************************************************
+
+        public async Task<IActionResult> ViewSales()
+        {
+            // Fetch sales data
+            List<Sale> sales = await _dBContext.Sales.ToListAsync();
+
+            // Fetch customers and products
+            List<Customer> customers = await _dBContext.Customers.ToListAsync();
+            List<Product> products = await _dBContext.Products.ToListAsync();
+
+            // Create the ViewModel and populate it with the lists
+            var viewModel = new ProductViewModels
+            {
+                Sales = sales,     // Sales data
+                Customers = customers,      // Customer data
+                Products = products         // Product data
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddSales(SalesDto salesDto)
+        {
+            if (ModelState.IsValid)
+            {
+                // Step 1: Check if the customer exists
+                var customer = await _dBContext.Customers
+                    .FirstOrDefaultAsync(c => c.CustomerId == salesDto.CustomerId);
+
+                if (customer == null)
+                {
+                    // If customer doesn't exist, return an error or message
+                    ModelState.AddModelError("", "Customer not found.");
+                    return View(salesDto);
+                }
+
+                // Step 2: Create a new Sale object using the SalesDto
+                var sale = new Sale
+                {
+                    CustomerId = salesDto.CustomerId,
+                    ProductSku = salesDto.ProductSku,
+                    QuantitySold = salesDto.QuantitySold,
+                    SaleDate = salesDto.SaleDate,
+                    TotalPrice = salesDto.TotalPrice,
+                    CreatedAt = DateTime.UtcNow // Assuming createdAt is the current timestamp
+                };
+
+                // Step 3: Retrieve the corresponding product from the database
+                var product = await _dBContext.Products
+                    .FirstOrDefaultAsync(p => p.Sku == salesDto.ProductSku);
+
+                if (product == null)
+                {
+                    // If product is not found, return an error
+                    ModelState.AddModelError("", "Product not found.");
+                    return View(salesDto);
+                }
+
+                // Step 4: Update the product quantity (decrease by the sold quantity)
+                if (product.Quantity >= salesDto.QuantitySold)
+                {
+                    product.Quantity -= salesDto.QuantitySold; // Decrease stock by quantity sold
+                }
+                else
+                {
+                    // If there's not enough stock, return an error or message
+                    ModelState.AddModelError("", "Not enough stock available for this sale.");
+                    return View(salesDto);
+                }
+
+                // Step 5: Save changes to both the sale and the product
+                await _dBContext.Sales.AddAsync(sale);
+                _dBContext.Products.Update(product); // Mark product as updated
+                await _dBContext.SaveChangesAsync(); // Commit changes to both Sales and Products
+
+                // Redirect to the sales list or some confirmation page
+                return RedirectToAction("ViewSales");
+            }
+
+            // If the model state is not valid, redisplay the form with error messages
+            return View(salesDto);
+        }
+
+
+        public async Task<IActionResult> Dashboard()
+        {
+            return View();
+        }
+
     }
 }

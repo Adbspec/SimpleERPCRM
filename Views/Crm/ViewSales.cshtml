@@ -1,0 +1,160 @@
+﻿<!-- start page title -->
+@using ERP.Dto;
+@model ERP.ViewModels.ProductViewModels;
+
+@{
+    SalesDto salesDto = new SalesDto();
+}
+<link href="~/css/vendor/dataTables.bootstrap5.css" rel="stylesheet" type="text/css">
+<link href="~/css/vendor/responsive.bootstrap5.css" rel="stylesheet" type="text/css">
+<div class="row">
+    <div class="col-12">
+        <div class="page-title-box">
+
+            <h4 class="page-title">Sales</h4>
+        </div>
+    </div>
+</div>
+<!-- end page title -->
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-sm-4">
+                        <a href="javascript:void(0);" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                            <i class="mdi mdi-plus-circle me-2"></i> Add Sales
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-centered table-striped dt-responsive nowrap w-100" id="customer-datatable">
+                        <thead>
+                            <tr>
+
+                                <th>Product ID</th>
+                                <th>Product Name</th>
+                                <th>Customer Name</th>
+                                <th>Quantity Sold</th>
+                                <th>Sale Date</th>
+                                <th>Total Price</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Sales.Any())
+                            {
+                                @foreach (var salesData in Model.Sales)
+                                {
+                                 <tr>
+                                        <td>@salesData.ProductSku</td>
+                                        <td>@Model.Products.FirstOrDefault(p => p.Sku == salesData.ProductSku)?.Name</td>
+                                        <td>@(@Model.Customers.FirstOrDefault(p => p.CustomerId == salesData.CustomerId)?.FirstName) (@Model.Customers.FirstOrDefault(p => p.CustomerId == salesData.CustomerId)?.LastName)</td>
+                                        <th>@salesData.QuantitySold</th>
+                                        <th>@salesData.SaleDate</th>
+                                        <th>@salesData.TotalPrice</th>
+                                 </tr>
+                                }
+
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div> <!-- end col -->
+</div>
+
+<!-- Add Customer Modal -->
+<div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCustomerModalLabel">Add Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form inside modal -->
+                <form asp-controller="Crm" asp-action="AddSales" method="post" id="customerForm">
+                    <!-- Customer ID -->
+                    <div class="mb-3">
+                        <label for="CustomerId" class="form-label">Customer</label>
+                        <select id="CustomerId" asp-for="@salesDto.CustomerId" class="form-select" required>
+                            <option value="" disabled selected>Select Customer</option>
+                            @foreach (var customer in Model.Customers)
+                            {
+                                <option value="@customer.CustomerId">@customer.FirstName @customer.LastName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Product ID -->
+                    <div class="mb-3">
+                        <label for="ProductId" class="form-label">Product</label>
+                        <select id="ProductId" asp-for="@salesDto.ProductSku" class="form-select" required>
+                            <option value="" disabled selected>Select Product</option>
+                            @foreach (var product in Model.Products)
+                            {
+                                <option value="@product.Sku">@product.Name</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Quantity Sold -->
+                    <div class="mb-3">
+                        <label for="QuantitySold" class="form-label">Quantity Sold</label>
+                        <input type="number" id="QuantitySold" asp-for="@salesDto.QuantitySold" class="form-control" min="1" required>
+                    </div>
+
+                    <!-- Total Price -->
+                    <div class="mb-3">
+                        <label for="TotalPrice" class="form-label">Total Price</label>
+                        <input type="number" id="TotalPrice" asp-for="@salesDto.TotalPrice" class="form-control" step="0.01" min="0" required>
+                    </div>
+
+                    <button type="submit" class="mt-2 btn btn-primary" id="saveButton">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts
+{
+    <script src="~/js/vendor/jquery.dataTables.min.js"></script>
+    <script src="~/js/vendor/dataTables.bootstrap5.js"></script>
+    <script src="~/js/vendor/dataTables.responsive.min.js"></script>
+    <script src="~/js/vendor/responsive.bootstrap5.min.js"></script>
+    <script src="~/js/vendor/dataTables.checkboxes.min.js"></script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial.cshtml");
+    }
+    <script>
+                $(document).ready(function () {
+            "use strict";
+            $("#customer-datatable").DataTable({
+                language: {
+                    paginate: {
+                        previous: "<i class='mdi mdi-chevron-left'>",
+                        next: "<i class='mdi mdi-chevron-right'>"
+                    },
+                    info: "Showing customers _START_ to _END_ of _TOTAL_",
+                    lengthMenu: 'Display <select class=\'form-select form-select-sm ms-1 me-1\'><option value="10">10</option><option value="20">20</option><option value="-1">All</option></select> customers'
+                },
+                pageLength: 10,
+
+                drawCallback: function () {
+                    $(".dataTables_paginate > .pagination").addClass("pagination-rounded"), $("#products-datatable_length label").addClass("form-label")
+                }
+            })
+        });
+    </script>
+
+}
